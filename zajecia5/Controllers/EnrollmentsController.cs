@@ -25,11 +25,20 @@ namespace zajecia5.Controllers
                 connection.Open();
                 try {
                     command.CommandText= "exec EnrollStudent @Studies, @IndexNumber, @FirstName, @LastName, @BirthDate;";
+                    command.Parameters.AddWithValue("Studies", newStudent.Studies);
+                    command.Parameters.AddWithValue("IndexNumber", newStudent.IndexNumber);
+                    command.Parameters.AddWithValue("FirstName", newStudent.FirstName);
+                    command.Parameters.AddWithValue("LastName", newStudent.LastName);
+                    command.Parameters.AddWithValue("BirthDate", newStudent.Birthdate);
+
+                    command.ExecuteNonQuery();
 
                 }catch(Exception ex)
                 {
                     Console.WriteLine(ex);
+                    return BadRequest();
                 }
+                return Ok();
 
             }
             return Ok();

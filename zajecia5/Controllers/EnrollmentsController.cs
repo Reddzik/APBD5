@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using zajecia5.DOTs.Requests;
+using zajecia5.DOTs.Responses;
 using zajecia5.Models;
+using zajecia5.Services;
 
 namespace zajecia5.Controllers
 {
@@ -14,44 +16,21 @@ namespace zajecia5.Controllers
     [ApiController]
     public class EnrollmentsController : ControllerBase
     {
+        private IStudentDbService _service; 
+        public EnrollmentsController(IStudentDbService service)
+        {
+            _service = service;
+        }
         [HttpPost]
         public IActionResult EnrollStudent(EnrollStudentRequest req)
         {
-            var newStudent = ParseDataFromReqToStudent(req);
-            using(var connection = new SqlConnection(""))
-            using(var command = new SqlCommand())
-            {
-                command.Connection = connection;
-                connection.Open();
-                try {
-                    command.CommandText= "exec EnrollStudent @Studies, @IndexNumber, @FirstName, @LastName, @BirthDate;";
-                    command.Parameters.AddWithValue("Studies", newStudent.Studies);
-                    command.Parameters.AddWithValue("IndexNumber", newStudent.IndexNumber);
-                    command.Parameters.AddWithValue("FirstName", newStudent.FirstName);
-                    command.Parameters.AddWithValue("LastName", newStudent.LastName);
-                    command.Parameters.AddWithValue("BirthDate", newStudent.Birthdate);
+            _service.EnrollStudent(req);
+            var response = new EnrollStudentResponse();
+            response.LastName = req.LastName;
+            response.Semester = 1;
+            response.StartDate = DateTime.Now;
+            return CreatedAtAction("EnrollStudent", response);
 
-                    command.ExecuteNonQuery();
-
-                }catch(Exception ex)
-                {
-                    Console.WriteLine(ex);
-                    return BadRequest();
-                }
-                return Ok();
-
-            }
-            return Ok();
-        }
-        private Student ParseDataFromReqToStudent(EnrollStudentRequest req)
-        {
-            var student = new Student();
-            student.IndexNumber = req.IndexNumber;
-            student.FirstName = req.FirstName;
-            student.LastName = req.LastName;
-            student.Birthdate = req.Birthdate;
-            student.Studies = req.Studies;
-            return student;
         }
     }
 }

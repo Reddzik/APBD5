@@ -18,7 +18,7 @@ namespace zajecia5.DOTs.Requests
         [MaxLength(60)]
         public string LastName { get; set; }
         [Required]
-        public DateTime Birthdate { get; set; }
+        public string Birthdate { get; set; }
         public string Studies { get; set; }
     }
 }

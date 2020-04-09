@@ -42,9 +42,30 @@ namespace zajecia5.Services
             return new AcceptedResult();
         }
 
-        public void PromoteStudents(string studies, int semester)
+        public IActionResult PromoteStudents(PromoteStudentsRequest req)
         {
-            throw new NotImplementedException();
+            using(var connection = new SqlConnection())
+            using (var command = new SqlCommand())
+            {
+                connection.ConnectionString = _ConnectionString;
+                command.Connection = connection;
+                connection.Open();
+                var transaction = connection.BeginTransaction();
+                command.Transaction = transaction;
+                try {
+                    command.CommandText = "Exec PromoteStudents @semester, @studiesName;";
+                    command.Parameters.AddWithValue("semester", req.Semester);
+                    command.Parameters.AddWithValue("studiesName", req.Studies);
+                }
+                catch(SqlException ex)
+                {
+                    Console.WriteLine(ex);
+                    transaction.Rollback();
+                    return new BadRequestResult();
+                }
+                transaction.Commit();
+            }
+            return new AcceptedResult();
         }
     }
 }

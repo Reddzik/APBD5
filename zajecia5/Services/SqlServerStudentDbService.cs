@@ -13,7 +13,7 @@ namespace zajecia5.Services
     public class SqlServerStudentDbService : IStudentDbService
     {
         private const string _ConnectionString = "Data Source=db-mssql;Initial Catalog=s18819;Integrated Security=True";
-        public IActionResult EnrollStudent(EnrollStudentRequest req)
+        public Student EnrollStudent(EnrollStudentRequest req)
         {
             var newStudent = EnrollStudentRequestParser.ParseFromReqToStudent(req);
             using (var connection = new SqlConnection())
@@ -35,14 +35,14 @@ namespace zajecia5.Services
                 catch (SqlException ex)
                 {
                     Console.WriteLine(ex);
-                    return new BadRequestResult();
+                    return null;
                 }
             }
             Console.WriteLine("Udało się dodać studenta!");
-            return new AcceptedResult();
+            return newStudent;
         }
 
-        public IActionResult PromoteStudents(PromoteStudentsRequest req)
+        public Boolean PromoteStudents(PromoteStudentsRequest req)
         {
             using(var connection = new SqlConnection())
             using (var command = new SqlCommand())
@@ -61,11 +61,11 @@ namespace zajecia5.Services
                 {
                     Console.WriteLine(ex);
                     transaction.Rollback();
-                    return new BadRequestResult();
+                    return false;
                 }
                 transaction.Commit();
             }
-            return new AcceptedResult();
+            return true;
         }
     }
 }

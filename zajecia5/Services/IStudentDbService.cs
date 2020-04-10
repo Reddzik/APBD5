@@ -10,7 +10,7 @@ namespace zajecia5.Services
 {
     public interface IStudentDbService
     {
-        IActionResult EnrollStudent(EnrollStudentRequest req);
-        void PromoteStudents(string studies, int semester);
+        Student EnrollStudent(EnrollStudentRequest req);
+        Boolean PromoteStudents(PromoteStudentsRequest req);
     }
 }

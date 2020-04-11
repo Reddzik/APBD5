@@ -37,7 +37,7 @@ namespace zajecia5
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IStudentDbService studentDb)
         {
             if (env.IsDevelopment())
             {
@@ -54,7 +54,13 @@ namespace zajecia5
                         await contex.Response.WriteAsync("Podaj index!");
                         return;
                     }
-                    // pobieranie studenta :D 
+                    var stIndex = contex.Request.Headers["Index"].ToString();
+                    if (!studentDb.IsThereStudent(stIndex))
+                    {
+                        contex.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                        await contex.Response.WriteAsync("Taki student nie istnieje!");
+                        return;
+                    }
                     await next();
                 });
             });

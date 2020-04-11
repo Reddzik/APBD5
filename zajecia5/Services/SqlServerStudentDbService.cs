@@ -99,5 +99,25 @@ namespace zajecia5.Services
             }
 
         }
+        public Boolean IsThereStudent(string index)
+        {
+            using (var connection = new SqlConnection(_ConnectionString))
+            using (var command = new SqlCommand())
+            {
+                command.Connection = connection;
+                connection.Open();
+                try
+                {
+                    command.CommandText = "exec findStudent @index;";
+                    command.Parameters.AddWithValue("index", index);
+                    var reader = command.ExecuteReader();
+                    return reader.Read();
+                }catch(SqlException ex)
+                {
+                    Console.WriteLine(ex);
+                    return false;
+                }
+            }
+        }
     }
 }

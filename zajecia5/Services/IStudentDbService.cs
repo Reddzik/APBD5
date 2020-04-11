@@ -12,5 +12,6 @@ namespace zajecia5.Services
     {
         Student EnrollStudent(EnrollStudentRequest req);
         Boolean PromoteStudents(PromoteStudentsRequest req);
+        Student GetStudent(string index);
     }
 }

@@ -67,5 +67,37 @@ namespace zajecia5.Services
             }
             return true;
         }
+
+        public Student GetStudent(string index)
+        {
+            using(var connection = new SqlConnection(_ConnectionString))
+            using (var command = new SqlCommand())
+            {
+                command.Connection = connection;
+                connection.Open();
+                try
+                {
+                    command.CommandText = "Exec getStudent @index";
+                    command.Parameters.AddWithValue("index", index);
+                    var dataReaded = command.ExecuteReader();
+                    var newStudent = new Student();
+                    while (!dataReaded.Read())
+                    {
+                        newStudent.FirstName = dataReaded["FirstName"].ToString();
+                        newStudent.LastName = dataReaded["LastName"].ToString();
+                        newStudent.Studies = dataReaded["Name"].ToString();
+                        newStudent.Semester = (int)dataReaded["Semester"];
+                    }
+                    return newStudent;
+
+                }
+                catch(SqlException ex)
+                {
+                    Console.WriteLine(ex);
+                    return null;
+                }
+            }
+
+        }
     }
 }

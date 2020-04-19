@@ -62,3 +62,78 @@ POST
 POST
 /api/promotions
 {}
+GET
+/weatherforecast
+
+GET
+/favicon.ico
+
+POST
+/api/login
+{
+	"login":"123"
+	"password":"lol33"
+}
+POST
+/api/login
+{
+	"login":"123",
+	"password":"lol33"
+}
+POST
+/api/login
+{
+	"username":"123",
+	"password":"lol33"
+}
+POST
+/api/login
+{
+	"username":"1233",
+	"password":"lol123"
+}
+POST
+/api/login
+{
+	"username":"1233",
+	"password":"lol123"
+}
+GET
+/weatherforecast
+
+GET
+/favicon.ico
+
+POST
+/api/login
+{
+	"username":"1233",
+	"password":"lol123"
+}
+POST
+/api/login
+{
+	"username":"dwadaw",
+	"password":"lol123"
+}
+POST
+/api/login
+{
+	"username":"1233",
+	"password":"lol123"
+}
+GET
+/api/promotions
+
+GET
+/api/promotions
+{
+	"Studies":"IT",
+	"Semester":3
+}
+POST
+/api/promotions
+{
+	"Studies":"IT",
+	"Semester":3
+}

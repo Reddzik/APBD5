@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using zajecia5.DOTs.Requests;
+using zajecia5.Services;
 
 namespace zajecia5.Controllers
 {
@@ -18,18 +19,22 @@ namespace zajecia5.Controllers
     public class LoginController : ControllerBase
     {
         public IConfiguration Configuration;
-        public LoginController(IConfiguration configuration)
+        private IStudentDbService _service;
+        public LoginController(IConfiguration configuration, IStudentDbService service)
         {
             Configuration = configuration;
+            _service = service;
         }
         [HttpPost]
         public IActionResult Login(LoginRequest req)
         {
+            if (!_service.CheckCredential(req.username, req.password))
+                return StatusCode(403);
+
             var claims = new[]
 {
-                new Claim(type: ClaimTypes.NameIdentifier,"1"),
-                new Claim(ClaimTypes.Name,"StudentName"),
-                new Claim(ClaimTypes.Role,"admin"),
+                new Claim(type: ClaimTypes.NameIdentifier,req.username),
+                new Claim(ClaimTypes.Role,"employee"),
             };
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["SecretKey"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

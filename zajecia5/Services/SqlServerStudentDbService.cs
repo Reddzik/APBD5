@@ -64,8 +64,8 @@ namespace zajecia5.Services
                     return false;
                 }
                 transaction.Commit();
+                return true;
             }
-            return true;
         }
 
         public Student GetStudent(string index)
@@ -108,7 +108,7 @@ namespace zajecia5.Services
                 connection.Open();
                 try
                 {
-                    command.CommandText = "exec findStudent @index;";
+                    command.CommandText = "Select 1 from student where IndexNumber = @index";
                     command.Parameters.AddWithValue("index", index);
                     var reader = command.ExecuteReader();
                     return reader.Read();
@@ -122,7 +122,25 @@ namespace zajecia5.Services
 
         public bool CheckCredential(string user, string password)
         {
-            throw new NotImplementedException();
+            using(var connection = new SqlConnection(_ConnectionString))
+            using(var command = new SqlCommand())
+            {
+                command.Connection = connection;
+                connection.Open();
+                try
+                {
+                    command.CommandText = "Select 1 from student where IndexNumber = @user and password = @password; ";
+                    command.Parameters.AddWithValue("user", user);
+                    command.Parameters.AddWithValue("password", password);
+                    return command.ExecuteReader().Read();
+
+                }
+                catch(SqlException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    return false;
+                }
+            }
         }
     }
 }

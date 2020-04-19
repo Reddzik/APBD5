@@ -37,6 +37,8 @@ namespace zajecia5.Handlers
             //credentials[0]- login ; credentials[1]- pass;
             if (credentials.Length != 2)
                 return AuthenticateResult.Fail("Incorrect authorization value");
+            if(!_service.CheckCredential(credentials[0], credentials[1]))
+                return AuthenticateResult.Fail("Wrong username or password");
 
             var claims = new[]
             {

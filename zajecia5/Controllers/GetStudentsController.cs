@@ -7,7 +7,6 @@ using zajecia5.DOTs.Requests;
 using zajecia5.DOTs.Responses;
 using zajecia5.Services;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace zajecia5.Controllers
 {

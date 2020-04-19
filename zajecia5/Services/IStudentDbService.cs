@@ -14,5 +14,6 @@ namespace zajecia5.Services
         Boolean PromoteStudents(PromoteStudentsRequest req);
         Student GetStudent(string index);
         Boolean IsThereStudent(string index);
+        Boolean CheckCredential(string user, string password);
     }
 }

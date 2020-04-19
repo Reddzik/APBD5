@@ -119,5 +119,10 @@ namespace zajecia5.Services
                 }
             }
         }
+
+        public bool CheckCredential(string user, string password)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

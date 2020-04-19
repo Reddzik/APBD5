@@ -29,7 +29,8 @@ namespace zajecia5
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddTransient<IStudentDbService, SqlServerStudentDbService>();
-            services.AddControllers();
+            services.AddControllers()
+                    .AddXmlSerializerFormatters();
             services.AddSwaggerGen(config =>
             {
                 config.SwaggerDoc("v1", new OpenApiInfo { Title = "Students App API", Version = "v1" });

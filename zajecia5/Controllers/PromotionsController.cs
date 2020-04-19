@@ -10,7 +10,7 @@ using zajecia5.Services;
 
 namespace zajecia5.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/promotions")]
     [ApiController]
     public class PromotionsController : ControllerBase
     {
@@ -20,13 +20,14 @@ namespace zajecia5.Controllers
         {
             _service = service;
         }
+        [HttpPost]
         public IActionResult PromoteStudent(PromoteStudentsRequest req)
         {
             var arePromoted = _service.PromoteStudents(req);
             if (!arePromoted) return StatusCode(500);
             var response = new PromoteStudentsResponse()
             {
-                Semester = req.Semester,
+                Semester = req.Semester+1,
                 Studies = req.Studies
             };
             return Ok(response);

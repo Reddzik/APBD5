@@ -32,7 +32,7 @@ namespace zajecia5.MIddlewear
                 }
                 string stringToLog = $"{method}\n{path}\n{bodyStr}\n{queryString}";
 
-                if(File.Exists(PathToFile)) await File.WriteAllTextAsync(PathToFile, stringToLog, Encoding.UTF8);
+                if(File.Exists(PathToFile)) await File.AppendAllTextAsync(PathToFile, stringToLog, Encoding.UTF8);
             }
 
             if(_next!=null) await _next(context);

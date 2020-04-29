@@ -44,7 +44,7 @@ namespace zajecia5.Controllers
                     issuer: "Gakko",
                     audience: "Students",
                     claims: claims,
-                    expires: DateTime.Now.AddMinutes(10),
+                    expires: DateTime.Now.AddMinutes(30),
                     signingCredentials: creds
                 ) ;
 

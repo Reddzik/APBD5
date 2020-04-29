@@ -142,5 +142,51 @@ namespace zajecia5.Services
                 }
             }
         }
+
+        public string GetUserByRefreshToken(string token)
+        {
+            using(var connection = new SqlConnection(_ConnectionString))
+            using(var command = new SqlCommand())
+            {
+                command.Connection = connection;
+                connection.Open();
+                try
+                {
+                    command.CommandText = "Select FirstName from Student where refreshToken = @token";
+                    command.Parameters.AddWithValue("@token", token);
+                    var reader = command.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        return reader["FirstName"].ToString();
+                    }
+                    return null;
+                }catch(SqlException ex)
+                {
+                    Console.WriteLine(ex);
+                    return null;
+                }
+            }
+        }
+        public Boolean AddRefreshTokenToUser(string token, string index)
+        {
+            using (var connection = new SqlConnection(_ConnectionString))
+            using (var command = new SqlCommand())
+            {
+                command.Connection = connection;
+                connection.Open();
+                try
+                {
+                    command.CommandText = "exec addRefreshToken @token, @index";
+                    command.Parameters.AddWithValue("token", token);
+                    command.Parameters.AddWithValue("index", index);
+                    command.ExecuteNonQuery();
+                    return true;
+                }catch(SqlException ex)
+                {
+                    Console.WriteLine(ex);
+                    return false;
+                }
+            }
+        }
     }
 }

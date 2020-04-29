@@ -32,10 +32,9 @@ namespace zajecia5.Controllers
                 return StatusCode(403);
 
             var user = _service.GetLoggedStudent(req.username, req.password);
-            if(user== null)
-            {
-                return StatusCode(403);
-            }
+
+            if (user == null) return StatusCode(403);
+
             Console.WriteLine(user.FirstName, user.IndexNumber);
 
             var claims = new[]
@@ -61,6 +60,35 @@ namespace zajecia5.Controllers
                 accessToken = new JwtSecurityTokenHandler().WriteToken(token),
                 refreshToken
             }) ;
+        }
+        [HttpPost("refresh-token/{refToken}")]
+        public IActionResult RefreshTokenLogin(string refToken)
+        {
+            var user = _service.GetUserByRefreshToken(refToken);
+
+            if (user == null) return StatusCode(403);
+
+            var claims = new[]
+            {
+                new Claim(type: ClaimTypes.NameIdentifier,user.IndexNumber),
+                new Claim(ClaimTypes.Role,"employee"),
+                new Claim(ClaimTypes.Name, user.FirstName),
+            };
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["SecretKey"]));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var token = new JwtSecurityToken
+                (
+                    issuer: "Gakko",
+                    audience: "Students",
+                    claims: claims,
+                    expires: DateTime.Now.AddMinutes(20),
+                    signingCredentials: creds
+                );
+            return Ok(new
+            {
+                accessToken = new JwtSecurityTokenHandler().WriteToken(token),
+                refreshToken = refToken
+            });
         }
     }
 }

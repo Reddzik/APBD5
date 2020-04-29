@@ -152,11 +152,11 @@ namespace zajecia5.Services
                 connection.Open();
                 try
                 {
-                    command.CommandText = "Select * from Student where refreshToken = @token";
+                    command.CommandText = "Select * from Student where RefreshToken = @token";
                     command.Parameters.AddWithValue("token", token);
                     var dataReaded = command.ExecuteReader();
                     var newStudent = new Student();
-                    if(!dataReaded.Read())
+                    if(dataReaded.Read())
                     {
                         newStudent.IndexNumber = dataReaded["IndexNumber"].ToString();
                         newStudent.FirstName = dataReaded["FirstName"].ToString();

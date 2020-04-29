@@ -31,10 +31,18 @@ namespace zajecia5.Controllers
             if (!_service.CheckCredential(req.username, req.password))
                 return StatusCode(403);
 
+            var user = _service.GetLoggedStudent(req.username, req.password);
+            if(user== null)
+            {
+                return StatusCode(403);
+            }
+            Console.WriteLine(user.FirstName, user.IndexNumber);
+
             var claims = new[]
-{
-                new Claim(type: ClaimTypes.NameIdentifier,req.username),
+            {
+                new Claim(type: ClaimTypes.NameIdentifier,user.IndexNumber),
                 new Claim(ClaimTypes.Role,"employee"),
+                new Claim(ClaimTypes.Name, user.FirstName),
             };
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["SecretKey"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -44,14 +52,14 @@ namespace zajecia5.Controllers
                     issuer: "Gakko",
                     audience: "Students",
                     claims: claims,
-                    expires: DateTime.Now.AddMinutes(30),
+                    expires: DateTime.Now.AddMinutes(20),
                     signingCredentials: creds
                 ) ;
-
-
+            var refreshToken = Guid.NewGuid();
+            _service.AddRefreshTokenToUser(refreshToken.ToString(), user.IndexNumber);
             return Ok(new {
-                token = new JwtSecurityTokenHandler().WriteToken(token),
-                refreshToken=Guid.NewGuid() 
+                accessToken = new JwtSecurityTokenHandler().WriteToken(token),
+                refreshToken
             }) ;
         }
     }

@@ -137,3 +137,84 @@ POST
 	"Studies":"IT",
 	"Semester":3
 }
+GET
+/weatherforecast
+
+GET
+/favicon.ico
+
+POST
+/api/login
+{
+	"username":"s1234",
+	"password":"lol123"
+}
+GET
+/weatherforecast
+
+GET
+/favicon.ico
+
+GET
+/weatherforecast
+
+GET
+/favicon.ico
+
+POST
+/api/login
+{
+	"username":"s1234",
+	"password":"lol123"
+}
+GET
+/weatherforecast
+
+POST
+/api/login
+{
+	"username":"s1234",
+	"password":"lol123"
+}
+GET
+/favicon.ico
+
+POST
+/api/login
+{
+	"username":"s1234",
+	"password":"lol123"
+}
+GET
+/weatherforecast
+
+GET
+/favicon.ico
+
+POST
+/api/login
+{
+	"username":"s1234",
+	"password":"lol123"
+}
+GET
+/weatherforecast
+
+GET
+/favicon.ico
+
+POST
+/api/login
+{
+	"username":"s1234",
+	"password":"lol123"
+}
+POST
+/api/login
+{
+	"username":"s1234",
+	"password":"lol123"
+}
+GET
+/favicon.ico
+

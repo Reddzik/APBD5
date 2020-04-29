@@ -83,9 +83,9 @@ namespace zajecia5.Services
                     var newStudent = new Student();
                     while (!dataReaded.Read())
                     {
+                        newStudent.IndexNumber = dataReaded["IndexNumber"].ToString();
                         newStudent.FirstName = dataReaded["FirstName"].ToString();
                         newStudent.LastName = dataReaded["LastName"].ToString();
-                        newStudent.Studies = dataReaded["Name"].ToString();
                         newStudent.Semester = (int)dataReaded["Semester"];
                     }
                     return newStudent;
@@ -143,7 +143,7 @@ namespace zajecia5.Services
             }
         }
 
-        public string GetUserByRefreshToken(string token)
+        public Student GetUserByRefreshToken(string token)
         {
             using(var connection = new SqlConnection(_ConnectionString))
             using(var command = new SqlCommand())
@@ -152,20 +152,54 @@ namespace zajecia5.Services
                 connection.Open();
                 try
                 {
-                    command.CommandText = "Select FirstName from Student where refreshToken = @token";
-                    command.Parameters.AddWithValue("@token", token);
-                    var reader = command.ExecuteReader();
-                    if (reader.Read())
+                    command.CommandText = "Select * from Student where refreshToken = @token";
+                    command.Parameters.AddWithValue("token", token);
+                    var dataReaded = command.ExecuteReader();
+                    var newStudent = new Student();
+                    if(!dataReaded.Read())
                     {
-                        return reader["FirstName"].ToString();
+                        newStudent.IndexNumber = dataReaded["IndexNumber"].ToString();
+                        newStudent.FirstName = dataReaded["FirstName"].ToString();
+                        newStudent.LastName = dataReaded["LastName"].ToString();
                     }
-                    return null;
+                    return newStudent;
                 }catch(SqlException ex)
                 {
                     Console.WriteLine(ex);
                     return null;
                 }
             }
+        }
+
+        public Student GetLoggedStudent(string login, string password)
+        {
+                using (var connection = new SqlConnection(_ConnectionString))
+                using (var command = new SqlCommand())
+                {
+                    command.Connection = connection;
+                    connection.Open();
+                    try
+                    {
+                        command.CommandText = "Select * from Student where IndexNumber = @login and password = @password";
+                        command.Parameters.AddWithValue("login", login);
+                        command.Parameters.AddWithValue("password", password);
+                        var dataReaded = command.ExecuteReader();
+                        var newStudent = new Student();
+                        if (dataReaded.Read())
+                        {
+                            newStudent.IndexNumber = dataReaded["IndexNumber"].ToString();
+                            newStudent.FirstName = dataReaded["FirstName"].ToString();
+                            newStudent.LastName = dataReaded["LastName"].ToString();
+                        }
+                        return newStudent;
+                    }
+                    catch (SqlException ex)
+                    {
+                        Console.WriteLine(ex);
+                        return null;
+                    }
+                }
+            
         }
         public Boolean AddRefreshTokenToUser(string token, string index)
         {

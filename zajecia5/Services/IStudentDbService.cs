@@ -15,9 +15,8 @@ namespace zajecia5.Services
         Student GetStudent(string index);
         Boolean IsThereStudent(string index);
         Boolean CheckCredential(string user, string password);
-
-        string GetUserByRefreshToken(string token);
-
+        Student GetUserByRefreshToken(string token);
         Boolean AddRefreshTokenToUser(string token, string index);
+        Student GetLoggedStudent(string login, string password);
     }
 }

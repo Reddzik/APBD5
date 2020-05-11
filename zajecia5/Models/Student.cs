@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace zajecia5.Models
 {
-    public class Student
+    public partial class Student
     {
         public string IndexNumber { get; set; }
         public string FirstName { get; set; }

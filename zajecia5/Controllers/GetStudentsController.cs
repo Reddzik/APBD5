@@ -22,18 +22,9 @@ namespace zajecia5.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetStudent(GetStudentRequest req)
+        public IActionResult GetStudent()
         {
-            var student = _service.GetStudent(req.IndexNumber);
-            if (student == null) return StatusCode(500);
-            var response = new GetStudentResponse()
-            {
-                FirstName = student.FirstName,
-                LastName = student.LastName,
-                Studies = student.Studies,
-                Semester = student.Semester
-            };
-            return Ok(response);
+            return Ok(_service.GetStudents());
         }
     }
 }

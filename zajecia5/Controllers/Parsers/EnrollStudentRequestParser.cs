@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using zajecia5.DOTs.Requests;
-using zajecia5.Models;
+using zajecia5.RenderedModels;
 
 namespace zajecia5.Controllers.Parsers
 {
@@ -18,7 +18,7 @@ namespace zajecia5.Controllers.Parsers
             student.IndexNumber = req.IndexNumber;
             student.FirstName = req.FirstName;
             student.LastName = req.LastName;
-            student.Birthdate = DateTime.Parse(req.Birthdate);
+            student.BirthDate = DateTime.Parse(req.Birthdate);
             student.Studies = req.Studies;
             return student;
         }

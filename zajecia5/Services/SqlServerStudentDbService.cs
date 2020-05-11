@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Org.BouncyCastle.Ocsp;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -6,13 +7,18 @@ using System.Linq;
 using System.Threading.Tasks;
 using zajecia5.Controllers.Parsers;
 using zajecia5.DOTs.Requests;
-using zajecia5.Models;
+using zajecia5.RenderedModels;
 
 namespace zajecia5.Services
 {
     public class SqlServerStudentDbService : IStudentDbService
     {
         private const string _ConnectionString = "Data Source=db-mssql;Initial Catalog=s18819;Integrated Security=True";
+        private readonly s18819Context _context;
+        public SqlServerStudentDbService(s18819Context context)
+        {
+            this._context = context;
+        }
         public Student EnrollStudent(EnrollStudentRequest req)
         {
             var newStudent = EnrollStudentRequestParser.ParseFromReqToStudent(req);
@@ -29,7 +35,7 @@ namespace zajecia5.Services
                     command.Parameters.AddWithValue("IndexNumber", newStudent.IndexNumber);
                     command.Parameters.AddWithValue("FirstName", newStudent.FirstName);
                     command.Parameters.AddWithValue("LastName", newStudent.LastName);
-                    command.Parameters.AddWithValue("BirthDate", newStudent.Birthdate);
+                    command.Parameters.AddWithValue("BirthDate", newStudent.BirthDate);
                     command.ExecuteNonQuery();
                 }
                 catch (SqlException ex)
@@ -44,7 +50,7 @@ namespace zajecia5.Services
 
         public Boolean PromoteStudents(PromoteStudentsRequest req)
         {
-            using(var connection = new SqlConnection())
+            using (var connection = new SqlConnection())
             using (var command = new SqlCommand())
             {
                 connection.ConnectionString = _ConnectionString;
@@ -52,12 +58,13 @@ namespace zajecia5.Services
                 connection.Open();
                 var transaction = connection.BeginTransaction();
                 command.Transaction = transaction;
-                try {
+                try
+                {
                     command.CommandText = "Exec PromoteStudents @semester, @studiesName;";
                     command.Parameters.AddWithValue("semester", req.Semester);
                     command.Parameters.AddWithValue("studiesName", req.Studies);
                 }
-                catch(SqlException ex)
+                catch (SqlException ex)
                 {
                     Console.WriteLine(ex);
                     transaction.Rollback();
@@ -70,7 +77,7 @@ namespace zajecia5.Services
 
         public Student GetStudent(string index)
         {
-            using(var connection = new SqlConnection(_ConnectionString))
+            using (var connection = new SqlConnection(_ConnectionString))
             using (var command = new SqlCommand())
             {
                 command.Connection = connection;
@@ -86,12 +93,12 @@ namespace zajecia5.Services
                         newStudent.IndexNumber = dataReaded["IndexNumber"].ToString();
                         newStudent.FirstName = dataReaded["FirstName"].ToString();
                         newStudent.LastName = dataReaded["LastName"].ToString();
-                        newStudent.Semester = (int)dataReaded["Semester"];
+                        newStudent.IdEnrollment = (int)dataReaded["Semester"];
                     }
                     return newStudent;
 
                 }
-                catch(SqlException ex)
+                catch (SqlException ex)
                 {
                     Console.WriteLine(ex);
                     return null;
@@ -112,7 +119,8 @@ namespace zajecia5.Services
                     command.Parameters.AddWithValue("index", index);
                     var reader = command.ExecuteReader();
                     return reader.Read();
-                }catch(SqlException ex)
+                }
+                catch (SqlException ex)
                 {
                     Console.WriteLine(ex);
                     return false;
@@ -122,8 +130,8 @@ namespace zajecia5.Services
 
         public bool CheckCredential(string user, string password)
         {
-            using(var connection = new SqlConnection(_ConnectionString))
-            using(var command = new SqlCommand())
+            using (var connection = new SqlConnection(_ConnectionString))
+            using (var command = new SqlCommand())
             {
                 command.Connection = connection;
                 connection.Open();
@@ -135,7 +143,7 @@ namespace zajecia5.Services
                     return command.ExecuteReader().Read();
 
                 }
-                catch(SqlException ex)
+                catch (SqlException ex)
                 {
                     Console.WriteLine(ex.Message);
                     return false;
@@ -145,8 +153,8 @@ namespace zajecia5.Services
 
         public Student GetUserByRefreshToken(string token)
         {
-            using(var connection = new SqlConnection(_ConnectionString))
-            using(var command = new SqlCommand())
+            using (var connection = new SqlConnection(_ConnectionString))
+            using (var command = new SqlCommand())
             {
                 command.Connection = connection;
                 connection.Open();
@@ -156,14 +164,15 @@ namespace zajecia5.Services
                     command.Parameters.AddWithValue("token", token);
                     var dataReaded = command.ExecuteReader();
                     var newStudent = new Student();
-                    if(dataReaded.Read())
+                    if (dataReaded.Read())
                     {
                         newStudent.IndexNumber = dataReaded["IndexNumber"].ToString();
                         newStudent.FirstName = dataReaded["FirstName"].ToString();
                         newStudent.LastName = dataReaded["LastName"].ToString();
                     }
                     return newStudent;
-                }catch(SqlException ex)
+                }
+                catch (SqlException ex)
                 {
                     Console.WriteLine(ex);
                     return null;
@@ -173,33 +182,33 @@ namespace zajecia5.Services
 
         public Student GetLoggedStudent(string login, string password)
         {
-                using (var connection = new SqlConnection(_ConnectionString))
-                using (var command = new SqlCommand())
+            using (var connection = new SqlConnection(_ConnectionString))
+            using (var command = new SqlCommand())
+            {
+                command.Connection = connection;
+                connection.Open();
+                try
                 {
-                    command.Connection = connection;
-                    connection.Open();
-                    try
+                    command.CommandText = "Select * from Student where IndexNumber = @login and password = @password";
+                    command.Parameters.AddWithValue("login", login);
+                    command.Parameters.AddWithValue("password", password);
+                    var dataReaded = command.ExecuteReader();
+                    var newStudent = new Student();
+                    if (dataReaded.Read())
                     {
-                        command.CommandText = "Select * from Student where IndexNumber = @login and password = @password";
-                        command.Parameters.AddWithValue("login", login);
-                        command.Parameters.AddWithValue("password", password);
-                        var dataReaded = command.ExecuteReader();
-                        var newStudent = new Student();
-                        if (dataReaded.Read())
-                        {
-                            newStudent.IndexNumber = dataReaded["IndexNumber"].ToString();
-                            newStudent.FirstName = dataReaded["FirstName"].ToString();
-                            newStudent.LastName = dataReaded["LastName"].ToString();
-                        }
-                        return newStudent;
+                        newStudent.IndexNumber = dataReaded["IndexNumber"].ToString();
+                        newStudent.FirstName = dataReaded["FirstName"].ToString();
+                        newStudent.LastName = dataReaded["LastName"].ToString();
                     }
-                    catch (SqlException ex)
-                    {
-                        Console.WriteLine(ex);
-                        return null;
-                    }
+                    return newStudent;
                 }
-            
+                catch (SqlException ex)
+                {
+                    Console.WriteLine(ex);
+                    return null;
+                }
+            }
+
         }
         public Boolean AddRefreshTokenToUser(string token, string index)
         {
@@ -215,12 +224,51 @@ namespace zajecia5.Services
                     command.Parameters.AddWithValue("index", index);
                     command.ExecuteNonQuery();
                     return true;
-                }catch(SqlException ex)
+                }
+                catch (SqlException ex)
                 {
                     Console.WriteLine(ex);
                     return false;
                 }
             }
+        }
+
+        public ICollection<Student> GetStudents()
+        {
+            return _context.Student.ToList();
+        }
+
+        public void deleteStudent(string index)
+        {
+            var studentToRemove = new Student
+            {
+                IndexNumber = index,
+            };
+            _context.Attach(studentToRemove);
+            _context.Remove(studentToRemove);
+            _context.SaveChanges();
+        }
+
+        public void modifyStudentData(ModifyStudentDataRequest req)
+        {
+            var newStudent = new Student
+            {
+                FirstName = req.FirstName,
+                LastName = req.LastName,
+                BirthDate = req.BirthDate,
+                Password = req.Password
+            };
+            _context.Attach(newStudent);
+
+            _context.Entry(newStudent).Property("FirstName").IsModified = true;
+
+            _context.Entry(newStudent).Property("LastName").IsModified = true;
+
+            _context.Entry(newStudent).Property("BirthDate").IsModified = true;
+
+            _context.Entry(newStudent).Property("Password").IsModified = true;
+
+            _context.SaveChanges();
         }
     }
 }

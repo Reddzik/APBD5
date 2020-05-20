@@ -19,7 +19,7 @@ namespace zajecia5.Controllers
         {
             this._service = service;
         }
-        [HttpPost("student")]
+        [HttpPut("student")]
         public IActionResult ModifyStudent(ModifyStudentDataRequest req)
         {
             _service.modifyStudentData(req);

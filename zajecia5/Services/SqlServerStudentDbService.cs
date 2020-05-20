@@ -253,6 +253,7 @@ namespace zajecia5.Services
         {
             var newStudent = new Student
             {
+                IndexNumber = req.IndexNumber,
                 FirstName = req.FirstName,
                 LastName = req.LastName,
                 BirthDate = req.BirthDate,
